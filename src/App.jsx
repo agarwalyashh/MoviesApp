@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css'
 import StarRating from './StarRating'
 
@@ -47,7 +47,7 @@ function App() {
   }
 
   useEffect(function(){
-
+    handleClose()
     const controller =  new AbortController() // browser api
     async function fetchMovies(){
       try{
@@ -83,7 +83,6 @@ function App() {
     setErr("")
     return;
   }
-
     fetchMovies();
     return function(){
       controller.abort()
@@ -119,12 +118,15 @@ function Error({err}){
 
 function Header({query,setQuery,movies})
 {
-
+  const inputEl = useRef(null)
+  useEffect(function(){
+    inputEl.current.focus(); //inputEl.current is that dom element which is selected using useRef, refer input tag below ref is used
+  },[])
   return(
     <header className="flex bg-indigo-600 justify-evenly h-12 rounded-lg">
       <h1 className="text-2xl font-bold font-sans text-white mt-1">🍿 usePopcorn</h1>
       <input value={query} onChange={(e)=>setQuery(e.target.value)}
-      className=" w-80 h-8 mt-2 rounded-sm bg-indigo-500 text-center text-xl text-indigo-300" type="text" placeholder="Search movies..."/>
+      ref={inputEl} className=" w-80 h-8 mt-2 rounded-sm bg-indigo-500 text-center text-xl text-indigo-300" type="text" placeholder="Search movies..."/>
       <p className="text-2xl text-white font-sans mt-1">Found {movies.length} results</p>
     </header>
   )
